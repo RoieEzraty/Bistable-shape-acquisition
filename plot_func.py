@@ -31,7 +31,7 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
     n_springs = buckle_arr.shape[1]
 
     # Create main grid: 3 rows (loss, buckles, input) with buckle region smaller with custom ratios
-    fig = plt.figure(figsize=(7, 4 + 1.2*n_springs))  
+    fig = plt.figure(figsize=(7, 4 + 1.2*n_springs))
     gs = gridspec.GridSpec(3, 1, height_ratios=[2, n_springs*0.6, 2], figure=fig)
 
     # --- Loss subplot (top) ---
@@ -39,11 +39,14 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
 
     # Plot Supervisor loss on left y-axis
     ax1.plot(loss_in_t, '.', lw=2, label="Loss")
+    ax1.set_yscale('log')
+    ax1.set_ylim([1e-1, 1e3])
     ax1.set_ylabel("Loss")
     ax1.tick_params(axis="y")
+    ax1.xaxis.set_visible(False)  # hide entire x-axis to free space
 
     # --- Buckle subgrid (middle) ---
-    gs_buckle = gridspec.GridSpecFromSubplotSpec(n_springs, 1, subplot_spec=gs[1], hspace=0.3)
+    gs_buckle = gridspec.GridSpecFromSubplotSpec(n_springs, 1, subplot_spec=gs[1], hspace=0.2)
     ax_buckles = []
     for i in range(n_springs):
         ax = fig.add_subplot(gs_buckle[i])
@@ -52,22 +55,24 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
         ax.hlines(desired_buckle[i], xmin=time[0], xmax=time[-1],
                   colors=colors_lst[i+1], linestyles="--", lw=1.2,
                   label=f"Desired {i}")
-        # ax.set_ylabel("State")
         ax.set_yticks([-1, 0, 1])
-        ax.legend(loc="upper right", frameon=True)        
-        # Hide x ticks/labels for all but the last subplot
+        ax.legend(loc="upper right", frameon=True)
+
+        # Hide entire x-axis for all but the last buckle subplot to reclaim the space
         if i < n_springs - 1:
-            ax.tick_params(axis="x", which="both", bottom=False, top=False, labelbottom=False)
+            ax.xaxis.set_visible(False)
+
         ax_buckles.append(ax)
-    ax_buckles[int(n_springs/2)].set_ylabel("State")
+
+    # Put a shared y-label roughly in the middle buckle axis
+    if n_springs > 0:
+        ax_buckles[int(n_springs/2)].set_ylabel("State")
 
     # --- Input subplot (bottom) ---
     ax3 = fig.add_subplot(gs[2])
-
-    # ax3 = ax1.twinx()
     ax3.plot(input_update_in_t, '.', lw=2, label="Loss")
-    ax3.set_xlabel("Time step")
-    ax3.set_ylabel("Inputs for update")
+    ax3.set_xlabel(r'$t$')
+    ax3.set_ylabel(r'$\theta^!$')
     ax3.tick_params(axis="y")
 
     plt.tight_layout()
