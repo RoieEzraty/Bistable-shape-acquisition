@@ -31,8 +31,8 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
     n_springs = buckle_arr.shape[1]
 
     # Create main grid: 3 rows (loss, buckles, input) with buckle region smaller with custom ratios
-    fig = plt.figure(figsize=(7, 4 + 1.2*n_springs))
-    gs = gridspec.GridSpec(3, 1, height_ratios=[2, n_springs*0.6, 2], figure=fig)
+    fig = plt.figure(figsize=(4.6, 2.2 + 1.2*n_springs))
+    gs = gridspec.GridSpec(3, 1, height_ratios=[1.2, n_springs*0.75, 1.2], figure=fig)
 
     # --- Loss subplot (top) ---
     ax1 = fig.add_subplot(gs[0])
@@ -53,8 +53,7 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
         ax.step(time, buckle_arr[:, i], where="post",
                 color=colors_lst[i+1], lw=1.5, label=f"Spring {i}")
         ax.hlines(desired_buckle[i], xmin=time[0], xmax=time[-1],
-                  colors=colors_lst[i+1], linestyles="--", lw=1.2,
-                  label=f"Desired {i}")
+                  colors=colors_lst[i+1], linestyles="--", lw=1.2)
         ax.set_yticks([-1, 0, 1])
         ax.legend(loc="upper right", frameon=True)
 
@@ -75,5 +74,28 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
     ax3.set_ylabel(r'$\theta^!$')
     ax3.tick_params(axis="y")
 
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_response(theta, tau_init, tau_fin, tau_des, theta_range=[-180, 180], just_init=False):
+    # Set the custom color cycle globally without cycler
+    colors_lst, red, custom_cmap = colors.color_scheme()
+    plt.rcParams['axes.prop_cycle'] = plt.cycler('color', colors_lst)
+
+    fig, ax = plt.subplots(1, 1, figsize=(3, 3))
+    
+    ax.plot(theta, tau_init, lw=2, color=colors_lst[0])
+    legend = [r'$\tau\left(0\right)$', r'$\hat{\tau}$']
+    if not just_init:
+        legend = [r'$\tau\left(0\right)$', r'$\tau\left(end\right)$', r'$\hat{\tau}$']
+        ax.plot(theta, tau_fin, lw=2, color=colors_lst[2])
+    ax.plot(theta, tau_des, '--', lw=2, color=colors_lst[1])
+    ax.legend(legend)
+        
+    if theta_range:
+        ax.set_xlim(theta_range)
+    ax.set_ylabel(r'$\tau$')
+    ax.set_xlabel(r'$\theta$')
     plt.tight_layout()
     plt.show()
