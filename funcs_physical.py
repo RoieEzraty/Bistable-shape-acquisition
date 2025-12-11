@@ -22,14 +22,14 @@ def tau_hinge(theta, buckle, theta_ss, k_stiff, k_soft):
     return np.sum(tau_k(theta, buckle, theta_ss, k_stiff, k_soft))
     
 
-def tau_k(theta, buckle, theta_ss, k_stiff, k_soft):
+def tau_k(theta, buckle, theta_ss, k_stiff, k_soft, h=0):
     tau_k = np.zeros(np.size(theta_ss))
     for i in range(np.size(theta_ss)):
-        if buckle[i] == 1 and theta > -theta_ss[i] or buckle[i] == -1 and theta < theta_ss[i]:
-            k = k_stiff[i]
+        if buckle[h, i] == 1 and theta > -theta_ss[h, i] or buckle[h, i] == -1 and theta < theta_ss[h, i]:
+            k = k_stiff[h, i]
         else:
-            k = k_soft[i]
-        tau_k[i] = -k * (theta - (-buckle[i]) * theta_ss[i])
+            k = k_soft[h, i]
+        tau_k[i] = -k * (theta - (-buckle[h, i]) * theta_ss[h, i])
     return tau_k
 
 

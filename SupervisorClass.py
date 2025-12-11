@@ -44,7 +44,8 @@ class SupervisorClass:
         # Valid for a system with a single hinge
         self.desired_tau_in_t = np.zeros(self.iterations)
         for i, theta in enumerate(self.theta_in_t):
-            self.desired_tau_in_t[i] = funcs_physical.tau_hinge(Variabs, theta, self.desired_buckle)
+            self.desired_tau_in_t[i] = funcs_physical.tau_hinge(theta, self.desired_buckle, Variabs.theta_ss, Variabs.k_stiff,
+                                                                Variabs.k_soft)
 
     def desired_Fy(self, Variabs: "VariablesClass"):
         self.desired_tau_in_t = np.zeros(np.shape(self.theta_in_t))
