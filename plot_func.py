@@ -51,9 +51,9 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
     for i in range(n_springs):
         ax = fig.add_subplot(gs_buckle[i])
         ax.step(time, buckle_arr[:, :, i], where="post",
-                color=colors_lst[i+1], lw=1.5, label=f"Spring {i}")
+                color=colors_lst[(i+1) % len(colors_lst)], lw=1.5, label=f"Spring {i}")
         ax.hlines(desired_buckle[:, i], xmin=time[0], xmax=time[-1],
-                  colors=colors_lst[i+1], linestyles="--", lw=1.2)
+                  colors=colors_lst[(i+1) % len(colors_lst)], linestyles="--", lw=1.2)
         ax.set_yticks([-1, 0, 1])
         ax.legend(loc="upper right", frameon=True)
 
