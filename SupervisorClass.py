@@ -20,7 +20,9 @@ class SupervisorClass:
     """
     Class with variables dictated by supervisor
     """
-    def __init__(self, desired_buckle: NDArray[np.float_], alpha: float, T: int) -> None:
+    def __init__(self, alpha: float, T: int, desired_mode: str, desired_buckle: Optional[NDArray[np.float_]] = None,
+                 tau0: Optional[float] = None, tau1: Optional[float] = None, beta: Optional[float] = None,
+                 theta0: Optional[float] = None) -> None:
         self.T = T 
         self.desired_buckle = desired_buckle
         self.alpha = alpha
@@ -32,7 +34,11 @@ class SupervisorClass:
         
         self.input_update = 0
         self.input_update_in_t[0] = self.input_update
-        
+
+        self.desired_mode = desired_mode
+        if desired_mode == 'analytic_function':
+            self.desired_tau_func = lambda theta: tau0 + tau1 * np.exp(-beta*(theta-theta0))
+
     def init_dataset(self, Variabs, problem: str) -> None:
         # self.theta_in_t = np.array([-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50])
         # (hinges, iterations)
@@ -46,8 +52,11 @@ class SupervisorClass:
         self.desired_tau_in_t = np.zeros(self.T)
         for i, thetas in enumerate(self.theta_in_t):
             for j, theta in enumerate(thetas):
-                self.desired_tau_in_t[i] = funcs_physical.tau_hinge(theta, self.desired_buckle, Variabs.theta_ss,
-                                                                    Variabs.k_stiff, Variabs.k_soft, hinge=j)
+                if self.desired_mode == 'specific_buckle':
+                    self.desired_tau_in_t[i] = funcs_physical.tau_hinge(theta, self.desired_buckle, Variabs.theta_ss,
+                                                                        Variabs.k_stiff, Variabs.k_soft, hinge=j)
+                elif self.desired_mode == 'analytic_function':
+                    self.desired_tau_in_t[i] = self.desired_tau_func(theta)
 
     def desired_Fy(self, Variabs: "VariablesClass"):
         self.desired_tau_in_t = np.zeros(np.shape(self.theta_in_t))

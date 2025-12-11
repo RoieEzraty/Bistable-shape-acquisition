@@ -52,8 +52,9 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
         ax = fig.add_subplot(gs_buckle[i])
         ax.step(time, buckle_arr[:, :, i], where="post",
                 color=colors_lst[(i+1) % len(colors_lst)], lw=1.5, label=f"Spring {i}")
-        ax.hlines(desired_buckle[:, i], xmin=time[0], xmax=time[-1],
-                  colors=colors_lst[(i+1) % len(colors_lst)], linestyles="--", lw=1.2)
+        if desired_buckle is not None:
+            ax.hlines(desired_buckle[:, i], xmin=time[0], xmax=time[-1],
+                      colors=colors_lst[(i+1) % len(colors_lst)], linestyles="--", lw=1.2)
         ax.set_yticks([-1, 0, 1])
         ax.legend(loc="upper right", frameon=True)
 
@@ -104,6 +105,7 @@ def plot_response(theta: NDArray[np.float_], tau_init: float, tau_fin: float, ta
     ax.legend(legend)
     if theta_range:
         ax.set_xlim(theta_range)
+    ax.set_ylim([-5000, 5000])
     ax.set_ylabel(r'$\tau$')
     ax.set_xlabel(r'$\theta$')
     plt.tight_layout()
