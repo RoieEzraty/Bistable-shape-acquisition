@@ -28,7 +28,7 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
 
     buckle_arr = np.asarray(buckle_in_t)
     time = np.arange(buckle_arr.shape[0])
-    n_springs = buckle_arr.shape[1]
+    n_springs = buckle_arr.shape[2]
 
     # Create main grid: 3 rows (loss, buckles, input) with buckle region smaller with custom ratios
     fig = plt.figure(figsize=(4.6, 2.2 + 1.2*n_springs))
@@ -50,9 +50,9 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
     ax_buckles = []
     for i in range(n_springs):
         ax = fig.add_subplot(gs_buckle[i])
-        ax.step(time, buckle_arr[:, i], where="post",
+        ax.step(time, buckle_arr[:, :, i], where="post",
                 color=colors_lst[i+1], lw=1.5, label=f"Spring {i}")
-        ax.hlines(desired_buckle[i], xmin=time[0], xmax=time[-1],
+        ax.hlines(desired_buckle[:, i], xmin=time[0], xmax=time[-1],
                   colors=colors_lst[i+1], linestyles="--", lw=1.2)
         ax.set_yticks([-1, 0, 1])
         ax.legend(loc="upper right", frameon=True)

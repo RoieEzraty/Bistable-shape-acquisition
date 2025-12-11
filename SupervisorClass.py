@@ -43,24 +43,26 @@ class SupervisorClass:
     def desired_tau(self, Variabs: "VariablesClass"):
         # Valid for a system with a single hinge
         self.desired_tau_in_t = np.zeros(self.iterations)
-        for i, theta in enumerate(self.theta_in_t):
-            self.desired_tau_in_t[i] = funcs_physical.tau_hinge(theta, self.desired_buckle, Variabs.theta_ss, Variabs.k_stiff,
-                                                                Variabs.k_soft)
+        for i, thetas in enumerate(self.theta_in_t):
+            for j, theta in enumerate(thetas):
+                self.desired_tau_in_t[i] = funcs_physical.tau_hinge(theta, self.desired_buckle, Variabs.theta_ss,
+                                                                    Variabs.k_stiff, Variabs.k_soft, hinge=j)
 
     def desired_Fy(self, Variabs: "VariablesClass"):
         self.desired_tau_in_t = np.zeros(np.shape(self.theta_in_t))
         self.desired_Fy_in_t = np.zeros(self.iterations)
         for i, thetas in enumerate(self.theta_in_t):
             for j, theta in enumerate(thetas):
-                self.desired_tau_in_t[i, j] = funcs_physical.tau_hinge(theta, self.desired_buckle[j], Variabs.theta_ss[j],
-                                                                       Variabs.k_stiff[j], Variabs.k_soft[j])
+                print('theta', theta)
+                self.desired_tau_in_t[i, j] = funcs_physical.tau_hinge(theta, self.desired_buckle, Variabs.theta_ss,
+                                                                       Variabs.k_stiff, Variabs.k_soft, hinge=j)
             self.desired_Fy_in_t[i] = funcs_physical.Fy(thetas, self.desired_tau_in_t[i])
 
     def set_theta(self, Variabs: "VariablesClass", iteration: int) -> None:
         self.theta = self.theta_in_t[iteration]
         self.desired_tau = self.desired_tau_in_t[iteration]
         if not Variabs.supress_prints:
-            print('thetas ', self.thetas)
+            print('theta ', self.theta)
         
     def set_pos(self, Variabs: "VariablesClass", iteration: int) -> None:
         self.thetas = self.theta_in_t[iteration]
@@ -93,7 +95,7 @@ class SupervisorClass:
             delta_pos = funcs_ML.input_update_pos(State.tau, self.loss, self.thetas, Variabs.k_bar, Variabs.theta_bar)
             input_update_nxt = copy.copy(self.input_update) + self.alpha * delta_pos
         self.input_update = input_update_nxt
-        self.input_update_in_t.append(self.input_update)
+        self.input_update_in_t.append(float(self.input_update))
         if not Variabs.supress_prints:
             if Variabs.problem == 'tau':
                 print('delta theta', delta_theta)

@@ -35,16 +35,16 @@ class StateClass:
         self.buckle_in_t.append(self.buckle)
 
     def calc_tau(self, Variabs: "VariablesClass", thetas: NDArray[np.float_], hinge: int) -> None:
-        self.tau = funcs_physical.tau_hinge(thetas[hinge], self.buckle[hinge], Variabs.theta_ss[hinge], Variabs.k_stiff[hinge],
-                                            Variabs.k_soft[hinge]) 
+        self.tau = funcs_physical.tau_hinge(thetas[hinge], self.buckle, Variabs.theta_ss, Variabs.k_stiff,
+                                            Variabs.k_soft, hinge=hinge) 
         if not Variabs.supress_prints:
             print('tau ', self.tau)
             
-    def calc_Fy(self, Variabs: "VariablesClass", thetas: NDArray[np.float_]) -> None:
+    def calc_Fy(self, Variabs: "VariablesClass", thetas: NDArray[np.float_], hinge: int) -> None:
         self.taus = np.zeros(Variabs.hinges)
         for j, theta in enumerate(thetas):
-            self.taus[j] = funcs_physical.tau_hinge(theta, self.buckle[j], Variabs.theta_ss[j],
-                                                    Variabs.k_stiff[j], Variabs.k_soft[j])
+            self.taus[j] = funcs_physical.tau_hinge(theta, self.buckle, Variabs.theta_ss,
+                                                    Variabs.k_stiff, Variabs.k_soft, hinge=hinge)
         self.Fy = funcs_physical.Fy(thetas, self.taus) 
         if not Variabs.supress_prints:
             print('Fy ', self.Fy)

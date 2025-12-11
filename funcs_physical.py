@@ -18,24 +18,30 @@ def Fy(thetas: NDArray[np.float_], taus: NDArray[np.float_]) -> float:
     #         np.cos(np.deg2rad(thetas[0])+np.deg2rad(thetas[1]))*(taus[1]-taus[0]))/np.sin(np.deg2rad(thetas[1]))
 
 
-def tau_hinge(theta, buckle, theta_ss, k_stiff, k_soft):
-    return np.sum(tau_k(theta, buckle, theta_ss, k_stiff, k_soft))
+def tau_hinge(theta, buckle_arr, theta_ss, k_stiff, k_soft, hinge=0):
+    # print('buckle_arr in tau_hinge', buckle_arr_hinge)
+    return np.sum(taus_of_shims_in_hinge(theta, buckle_arr, theta_ss, k_stiff, k_soft, h=0))
     
 
-def tau_k(theta, buckle, theta_ss, k_stiff, k_soft, h=0):
+def taus_of_shims_in_hinge(theta, buckle_arr_hinge, theta_ss, k_stiff, k_soft, h=0):
+    # print('buckle_arr in taus_of_shims_in_hinge', buckle_arr_hinge)
     tau_k = np.zeros(np.size(theta_ss))
     for i in range(np.size(theta_ss)):
-        if buckle[h, i] == 1 and theta > -theta_ss[h, i] or buckle[h, i] == -1 and theta < theta_ss[h, i]:
+        # print('buckle[i]', buckle_arr_hinge[i])
+        # print('theta', theta)
+        # print('theta_ss[h, i]', theta_ss[h, i])
+        if buckle_arr_hinge[h, i] == 1 and theta > -theta_ss[h, i] or buckle_arr_hinge[h, i] == -1 and theta < theta_ss[h, i]:
             k = k_stiff[h, i]
         else:
             k = k_soft[h, i]
-        tau_k[i] = -k * (theta - (-buckle[h, i]) * theta_ss[h, i])
+        tau_k[i] = -k * (theta - (-buckle_arr_hinge[h, i]) * theta_ss[h, i])
     return tau_k
 
 
-def measure_full_response(buckle, theta_ss, k_stiff, k_soft, length=100):
+def measure_full_response(buckle, theta_ss, k_stiff, k_soft, h=0, length=100):
     theta_vec = np.linspace(-180, 180, length)
+    # print('theta_vec', theta_vec)
     tau_vec = np.zeros([length])
     for i, theta in enumerate(theta_vec):
-        tau_vec[i] = tau_hinge(theta, buckle, theta_ss, k_stiff, k_soft)
+        tau_vec[i] = tau_hinge(theta, buckle, theta_ss, k_stiff, k_soft, hinge=h)
     return theta_vec, tau_vec
