@@ -7,8 +7,10 @@ import copy
 import funcs_geometry, funcs_physical, funcs_ML
 
 if TYPE_CHECKING:
+    from StructureClass import StructureClass
     from VariablesClass import VariablesClass
     from StateClass import StateClass
+    from config import ExperimentConfig
 
 
 # ===================================================
@@ -19,35 +21,53 @@ if TYPE_CHECKING:
 class SupervisorClass:
     """
     Class with variables dictated by supervisor
+
+    Attributes
+    ----------
+
+    problem        - str, type of measurement used in problem
+                 'tau' = torque is optimized
+                 'Fy'  = force in y direction is optimized
     """
-    def __init__(self, alpha: float, T: int, desired_mode: str, desired_buckle: Optional[NDArray[np.float_]] = None,
-                 tau0: Optional[float] = None, tau1: Optional[float] = None, beta: Optional[float] = None,
-                 theta0: Optional[float] = None) -> None:
-        self.T = T 
-        self.desired_buckle = desired_buckle
-        self.alpha = alpha
-        self.input_in_t = np.zeros([T,])
-        self.input_update_in_t = np.zeros([T,])
-        self.loss_in_t = np.zeros([T,])
-        self.loss_norm_in_t = np.zeros([T,])
-        self.loss_MSE_in_t = np.zeros([T,])        
+    problem: str
+
+    def __init__(self, CFG: ExperimentConfig, Strctr: StructureClass) -> None:
+        """
+        Parameters
+        ----------
+        CFG    - ExperimentConfig.
+        Strctr - StructureClass.
+        
+        """
+        self.T = CFG.Train.T 
+        self.rand_key_dataset = CFG.Train.rand_key_dataset
+        self.problem = CFG.Train.problem
+        self.desired_mode = CFG.Train.desired_mode
+        if self.desired_mode == 'analytic_function':
+            self.desired_tau_func = lambda theta: CFG.Train.tau0 + \
+                                                  CFG.Train.tau1 * np.exp(-CFG.Train.beta * (theta - CFG.Train.theta0))
+        elif self.desired_mode == 'specific_buckle':
+            self.desired_buckle = Strctr._custom_reshape(CFG.Train.desired_buckle)
+        self.alpha = CFG.Train.alpha
+        self.input_in_t = np.zeros([self.T,])
+        self.input_update_in_t = np.zeros([self.T,])
+        self.loss_in_t = np.zeros([self.T,])
+        self.loss_norm_in_t = np.zeros([self.T,])
+        self.loss_MSE_in_t = np.zeros([self.T,])        
         
         self.input_update = 0
         self.input_update_in_t[0] = self.input_update
 
-        self.desired_mode = desired_mode
-        if desired_mode == 'analytic_function':
-            self.desired_tau_func = lambda theta: tau0 + tau1 * np.exp(-beta*(theta-theta0))
-
-    def init_dataset(self, Variabs, problem: str) -> None:
+    def init_dataset(self, Strctr: "StructureClass", Variabs: "VariablesClass",) -> None:
         # self.theta_in_t = np.array([-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50])
-        # (hinges, iterations)
-        self.theta_in_t = np.random.uniform(-90, 90, (self.T, Variabs.hinges))
-        if problem == 'Fy':
+        rng = np.random.default_rng(self.rand_key_dataset)
+        self.theta_in_t = rng.uniform(low=-90, high=90, size=(self.T, Strctr.H))  # (T, hinges)
+        # self.theta_in_t = np.random.uniform(-90, 90, (self.T, Strctr.H))  # (T, hinges) old
+        if self.problem == 'Fy':
             # x, y coords from thetas
-            self.pos_in_t = funcs_geometry.forward_points(Variabs.L, self.theta_in_t)
+            self.pos_in_t = funcs_geometry.forward_points(Strctr.L, self.theta_in_t)
     
-    def desired_tau(self, Variabs: "VariablesClass"):
+    def desired_tau(self, Variabs: "VariablesClass") -> None:
         # Valid for a system with a single hinge
         self.desired_tau_in_t = np.zeros(self.T)
         for i, thetas in enumerate(self.theta_in_t):
@@ -58,7 +78,7 @@ class SupervisorClass:
                 elif self.desired_mode == 'analytic_function':
                     self.desired_tau_in_t[i] = self.desired_tau_func(theta)
 
-    def desired_Fy(self, Variabs: "VariablesClass"):
+    def desired_Fy(self, Variabs: "VariablesClass") -> None:
         self.desired_tau_in_t = np.zeros(np.shape(self.theta_in_t))
         self.desired_Fy_in_t = np.zeros(self.T)
         for i, thetas in enumerate(self.theta_in_t):
@@ -74,9 +94,9 @@ class SupervisorClass:
         if not Variabs.supress_prints:
             print('theta ', self.theta)
         
-    def set_pos(self, Variabs: "VariablesClass", t: int) -> None:
+    def set_pos(self, Strctr: "StructureClass", t: int) -> None:
         self.thetas = self.theta_in_t[t]
-        self.pos = funcs_geometry.forward_points(Variabs.L, self.thetas)
+        self.pos = funcs_geometry.forward_points(Strctr.L, self.thetas)
         self.x = self.pos[0]
         self.y = self.pos[1]
         self.desired_Fy = self.desired_Fy_in_t[t]
@@ -99,18 +119,19 @@ class SupervisorClass:
             print('normalized loss', self.loss_norm)
             print('MSE loss ', self.loss_MSE)
         
-    def calc_input_update(self, State, Supervisor, Variabs, t: int) -> Union[float, NDArray[np.float_]]:
-        if Variabs.problem == 'tau':
+    def calc_input_update(self, State: "StateClass", Supervisor: "SupervisorClass", Variabs: "VariablesClass",
+                          t: int) -> None:
+        if self.problem == 'tau':
             delta_theta = funcs_ML.input_update_theta(State.tau, self.loss, self.theta, Variabs.k_bar, Variabs.theta_bar)
             input_update_nxt = copy.copy(self.input_update) + self.alpha * delta_theta
-        elif Variabs.problem == 'Fy':
+        elif self.problem == 'Fy':
             delta_pos = funcs_ML.input_update_pos(State.tau, self.loss, self.thetas, Variabs.k_bar, Variabs.theta_bar)
             input_update_nxt = copy.copy(self.input_update) + self.alpha * delta_pos
         self.input_update = input_update_nxt
         self.input_update_in_t[t] = float(self.input_update)
         if not Variabs.supress_prints:
-            if Variabs.problem == 'tau':
+            if self.problem == 'tau':
                 print('delta theta', delta_theta)
-            elif Variabs.problem == 'Fy':
+            elif self.problem == 'Fy':
                 print('delta pos', delta_pos)
             print('input_update ', self.input_update)
