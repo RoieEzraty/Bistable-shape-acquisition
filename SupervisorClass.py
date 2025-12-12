@@ -78,16 +78,6 @@ class SupervisorClass:
                 elif self.desired_mode == 'analytic_function':
                     self.desired_tau_in_t[i] = self.desired_tau_func(theta)
 
-    def desired_Fy(self, Variabs: "VariablesClass") -> None:
-        self.desired_tau_in_t = np.zeros(np.shape(self.theta_in_t))
-        self.desired_Fy_in_t = np.zeros(self.T)
-        for i, thetas in enumerate(self.theta_in_t):
-            for j, theta in enumerate(thetas):
-                print('theta', theta)
-                self.desired_tau_in_t[i, j] = funcs_physical.tau_hinge(theta, self.desired_buckle, Variabs.theta_ss,
-                                                                       Variabs.k_stiff, Variabs.k_soft, hinge=j)
-            self.desired_Fy_in_t[i] = funcs_physical.Fy(thetas, self.desired_tau_in_t[i])
-
     def set_theta(self, Variabs: "VariablesClass", t: int) -> None:
         self.theta = self.theta_in_t[t]
         self.desired_tau = self.desired_tau_in_t[t]
@@ -135,3 +125,17 @@ class SupervisorClass:
             elif self.problem == 'Fy':
                 print('delta pos', delta_pos)
             print('input_update ', self.input_update)
+
+# ===================================================
+# Not in use
+# ===================================================
+
+# def desired_Fy(self, Variabs: "VariablesClass") -> None:
+#     self.desired_tau_in_t = np.zeros(np.shape(self.theta_in_t))
+#     self.desired_Fy_in_t = np.zeros(self.T)
+#     for i, thetas in enumerate(self.theta_in_t):
+#         for j, theta in enumerate(thetas):
+#             print('theta', theta)
+#             self.desired_tau_in_t[i, j] = funcs_physical.tau_hinge(theta, self.desired_buckle, Variabs.theta_ss,
+#                                                                    Variabs.k_stiff, Variabs.k_soft, hinge=j)
+#         self.desired_Fy_in_t[i] = funcs_physical.Fy(thetas, self.desired_tau_in_t[i])
