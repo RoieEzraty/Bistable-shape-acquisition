@@ -39,7 +39,7 @@ class VariablesConfig:
 
     k_stiff: tuple = (6.2, 5.5, 5.0, 3.9, 3.8, 3.7, 3.6, 3.5, 2.0, 1.0)
     k_soft: tuple = (0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.1)
-    thresh: tuple = (70, 59, 48, 36, 35, 30, 22, 15, 12, 10)
+    thresh: tuple = (125, 120, 115, 110, 105, 100, 95, 90, 85, 80)
     theta_ss: tuple = (60, 50, 39, 24, 33, 28, 13, 11, 10, 9)
 
     supress_prints: bool = False
@@ -50,19 +50,19 @@ class VariablesConfig:
 # -----------------------------
 @dataclass(frozen=True)
 class TrainingConfig:
-    T: int = 460  # total training set time (not time to reach equilibrium during every step)
-    alpha: float = 0.0005  # learning rate
+    T: int = 860  # total training set time (not time to reach equilibrium during every step)
+    alpha: float = 0.8  # learning rate
 
     problem: str = 'tau'
     # problem: str = 'Fy'
 
-    desired_mode: str = 'analytic_function'
-    # desired_mode: str = 'specific_buckle'
+    # desired_mode: str = 'analytic_function'
+    desired_mode: str = 'specific_buckle'
 
     tau0: float = -2000
     tau1: float = 0.7
     beta: float = 0.07
-    theta0: float = -200
+    theta0: float = 70
 
     desired_buckle: tuple = (-1, 1, -1, -1, -1, -1, -1, -1, 1, -1)
 

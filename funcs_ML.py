@@ -13,14 +13,15 @@ def loss_MSE(loss):
     return np.mean(loss**2)
 
 
-def input_update_theta(tau, loss, theta, k_bar, theta_bar):
+def input_update_theta(tau, loss_norm, theta, k_bar, theta_bar):
     tau_pre = -1
     theta_pre = 1
-    normalization = k_bar**2*theta_bar**2
+    tau_normalization = k_bar*theta_bar**2
     # return (tau/k_bar-theta)*(loss)/(k_bar*theta_bar)
     # return (theta/theta_bar)*(loss)/(k_bar*theta_bar)
     # return (tau_pre*tau/k_bar+theta_pre*theta)*(loss)/(k_bar*theta_bar)
-    return (tau_pre*tau)*(theta_pre*theta)*(loss)/normalization
+    # return (tau_pre*tau)*(theta_pre*theta)*(loss)/normalization
+    return (tau_pre*tau/tau_normalization)*(theta_pre*theta)*loss_norm
 
 
 def input_update_pos(Fy, loss, pos, k_bar, pos_bar):

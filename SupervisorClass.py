@@ -92,19 +92,20 @@ class SupervisorClass:
         self.desired_Fy = self.desired_Fy_in_t[t]
         
     def calc_loss(self, Variabs: "VariablesClass", State: "StateClass", t: int) -> None:
-        if Variabs.problem == 'tau':
+        if self.problem == 'tau':
             self.loss = funcs_ML.loss_tau(self.desired_tau, State.tau)
-        elif Variabs.problem == 'Fy':
+        elif self.problem == 'Fy':
             self.loss = funcs_ML.loss_Fy(self.desired_Fy, State.Fy)
-        self.loss_norm = self.loss / self.theta_in_t[t]
+        tau_norm_of_theta = Variabs.k_bar * self.theta_in_t[t]**2
+        self.loss_norm = self.loss / tau_norm_of_theta
         self.loss_MSE = funcs_ML.loss_MSE(self.loss_norm)
         self.loss_in_t[t] = self.loss
         self.loss_norm_in_t[t] = self.loss_norm
         self.loss_MSE_in_t[t] = self.loss_MSE
         if not Variabs.supress_prints:
-            if Variabs.problem == 'tau':
+            if self.problem == 'tau':
                 print('desired tau ', self.desired_tau)
-            elif Variabs.problem == 'Fy':
+            elif self.problem == 'Fy':
                 print('desired recation force ', self.Fy)
             print('normalized loss', self.loss_norm)
             print('MSE loss ', self.loss_MSE)
@@ -112,7 +113,7 @@ class SupervisorClass:
     def calc_input_update(self, State: "StateClass", Supervisor: "SupervisorClass", Variabs: "VariablesClass",
                           t: int) -> None:
         if self.problem == 'tau':
-            delta_theta = funcs_ML.input_update_theta(State.tau, self.loss, self.theta, Variabs.k_bar, Variabs.theta_bar)
+            delta_theta = funcs_ML.input_update_theta(State.tau, self.loss_norm, self.theta, Variabs.k_bar, Variabs.theta_bar)
             input_update_nxt = copy.copy(self.input_update) + self.alpha * delta_theta
         elif self.problem == 'Fy':
             delta_pos = funcs_ML.input_update_pos(State.tau, self.loss, self.thetas, Variabs.k_bar, Variabs.theta_bar)

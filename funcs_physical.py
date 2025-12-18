@@ -7,24 +7,11 @@ if TYPE_CHECKING:
     from VariablesClass import VariablesClass
 
 
-def Fy(thetas: NDArray[np.float_], taus: NDArray[np.float_]) -> float:
-    thetas_rad = np.deg2rad(thetas)
-    # denom = np.sin(thetas[1])
-    return -taus[0]*np.sin(thetas_rad[0])
-    # return (np.cos(thetas_rad[0])*taus[1] + np.cos(thetas_rad[0]+thetas_rad[1])*(taus[1] - taus[0])) / denom
-    # return (np.sin(np.deg2rad(thetas[0]))*taus[1] + 
-    #         np.sin(np.deg2rad(thetas[0])+np.deg2rad(thetas[1]))*(taus[1]-taus[0]))/np.sin(np.deg2rad(thetas[1]))
-    # return (np.cos(np.deg2rad(thetas[0]))*taus[1] + 
-    #         np.cos(np.deg2rad(thetas[0])+np.deg2rad(thetas[1]))*(taus[1]-taus[0]))/np.sin(np.deg2rad(thetas[1]))
-
-
 def tau_hinge(theta, buckle_arr, theta_ss, k_stiff, k_soft, hinge=0):
-    # print('buckle_arr in tau_hinge', buckle_arr_hinge)
     return np.sum(taus_of_shims_in_hinge(theta, buckle_arr, theta_ss, k_stiff, k_soft, h=0))
     
 
 def taus_of_shims_in_hinge(theta, buckle_arr_hinge, theta_ss, k_stiff, k_soft, h=0):
-    # print('buckle_arr in taus_of_shims_in_hinge', buckle_arr_hinge)
     tau_k = np.zeros(np.size(theta_ss))
     for i in range(np.size(theta_ss)):
         # print('buckle[i]', buckle_arr_hinge[i])
@@ -39,9 +26,24 @@ def taus_of_shims_in_hinge(theta, buckle_arr_hinge, theta_ss, k_stiff, k_soft, h
 
 
 def measure_full_response(buckle, theta_ss, k_stiff, k_soft, h=0, length=100):
-    theta_vec = np.linspace(-180, 180, length)
+    theta_vec = np.linspace(-80, 80, length)
     # print('theta_vec', theta_vec)
     tau_vec = np.zeros([length])
     for i, theta in enumerate(theta_vec):
         tau_vec[i] = tau_hinge(theta, buckle, theta_ss, k_stiff, k_soft, hinge=h)
     return theta_vec, tau_vec
+
+
+# ===================================================
+# Not in use
+# ===================================================
+
+# def Fy(thetas: NDArray[np.float_], taus: NDArray[np.float_]) -> float:
+#     thetas_rad = np.deg2rad(thetas)
+#     # denom = np.sin(thetas[1])
+#     return -taus[0]*np.sin(thetas_rad[0])
+#     # return (np.cos(thetas_rad[0])*taus[1] + np.cos(thetas_rad[0]+thetas_rad[1])*(taus[1] - taus[0])) / denom
+#     # return (np.sin(np.deg2rad(thetas[0]))*taus[1] + 
+#     #         np.sin(np.deg2rad(thetas[0])+np.deg2rad(thetas[1]))*(taus[1]-taus[0]))/np.sin(np.deg2rad(thetas[1]))
+#     # return (np.cos(np.deg2rad(thetas[0]))*taus[1] + 
+#     #         np.cos(np.deg2rad(thetas[0])+np.deg2rad(thetas[1]))*(taus[1]-taus[0]))/np.sin(np.deg2rad(thetas[1]))
