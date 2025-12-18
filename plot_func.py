@@ -40,7 +40,7 @@ def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], lo
     # Plot Supervisor loss on left y-axis
     ax1.plot(loss_in_t, '.', lw=2, label="Loss")
     ax1.set_yscale('log')
-    ax1.set_ylim([1e-1, 1e3])
+    # ax1.set_ylim([1e-1, 1e3])
     ax1.set_ylabel("Loss")
     ax1.tick_params(axis="y")
     ax1.xaxis.set_visible(False)  # hide entire x-axis to free space
