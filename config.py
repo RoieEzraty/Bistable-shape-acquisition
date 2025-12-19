@@ -44,16 +44,16 @@ class VariablesConfig:
     # thresh: tuple = (125, 120, 115, 110, 105, 100, 95, 90, 85, 80)
     # theta_ss: tuple = (60, 50, 39, 24, 33, 28, 13, 11, 10, 9)
 
-    k_stiff: tuple = tuple(np.linspace(40, 4, 20))
+    k_stiff: tuple = tuple(np.linspace(40, 1, 20))
     # k_stiff: tuple = tuple(np.linspace(20, 4, 10))
 
-    # k_soft: tuple = tuple(np.linspace(3, 0.03, 20))
-    k_soft: tuple = tuple(np.flip(np.linspace(3, 0.3, 10)))
+    k_soft: tuple = tuple(np.linspace(0.1, 0.0001, 20))
+    # k_soft: tuple = tuple(np.flip(np.linspace(0.1, 0.0001, 20)))
 
     thresh: tuple = tuple(np.linspace(95, 165, 20))
     # thresh: tuple = tuple(np.flip(np.linspace(100, 160, 10)))
 
-    theta_ss: tuple = tuple(np.linspace(5, 65, 20))
+    theta_ss: tuple = tuple(np.linspace(4, 85, 20))
     # theta_ss: tuple = tuple(np.flip(np.linspace(5, 60, 10)))
 
     supress_prints: bool = False
@@ -64,7 +64,7 @@ class VariablesConfig:
 # -----------------------------
 @dataclass(frozen=True)
 class TrainingConfig:
-    T: int = 2000  # total training set time (not time to reach equilibrium during every step)
+    T: int = 2400  # total training set time (not time to reach equilibrium during every step)
     alpha: float = 0.02  # learning rate
 
     problem: str = 'tau'
@@ -73,10 +73,10 @@ class TrainingConfig:
     desired_mode: str = 'analytic_function'
     # desired_mode: str = 'specific_buckle'
 
-    tau0: float = +2000
-    tau1: float = 0.7
+    tau0: float = -2000
+    tau1: float = 0.65
     beta: float = 0.065
-    theta0: float = 65
+    theta0: float = 90
 
     desired_buckle: tuple = (1, 1, -1, 1, 1, -1, 1, 1, -1, 1)
 
@@ -90,7 +90,7 @@ class TrainingConfig:
 class StateConfig:
 
     # init_buckle: tuple = (1, -1, -1, 1, -1, -1, 1, 1, 1, 1)
-    init_buckle: tuple = (1, -1, -1, 1, -1, -1, 1, 1, 1, 1, -1, 1, 1, -1, -1, -1, 1, 1, 1, -1)
+    init_buckle: tuple = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
     # init_buckle: tuple = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)  # ones
 
 
