@@ -10,7 +10,7 @@ import numpy as np
 @dataclass(frozen=True)
 class StructureConfig:
     H: int = 1  # Hinges
-    S: int = 20  # Shims per hinge
+    S: int = 30  # Shims per hinge
     L: float = 1.  # length of edge (2 per hinge)
     Nin: int = 3  # tip position in (x, y) and its angle
     Nout: int = 3  # Fx, Fy, torque, all on tip
@@ -44,17 +44,17 @@ class VariablesConfig:
     # thresh: tuple = (125, 120, 115, 110, 105, 100, 95, 90, 85, 80)
     # theta_ss: tuple = (60, 50, 39, 24, 33, 28, 13, 11, 10, 9)
 
-    k_stiff: tuple = tuple(np.linspace(40, 1, 20))
+    k_stiff: tuple = tuple(np.linspace(40, 1, 30))
     # k_stiff: tuple = tuple(np.linspace(20, 4, 10))
 
-    k_soft: tuple = tuple(np.linspace(0.1, 0.0001, 20))
+    k_soft: tuple = tuple(np.linspace(0.1, 0.0001, 30))
     # k_soft: tuple = tuple(np.flip(np.linspace(0.1, 0.0001, 20)))
 
-    thresh: tuple = tuple(np.linspace(95, 165, 20))
+    thresh: tuple = tuple(np.linspace(95, 165, 30))
     # thresh: tuple = tuple(np.flip(np.linspace(100, 160, 10)))
 
-    theta_ss: tuple = tuple(np.linspace(4, 85, 20))
-    # theta_ss: tuple = tuple(np.flip(np.linspace(5, 60, 10)))
+    theta_ss: tuple = tuple(np.linspace(4, 85, 30))
+    # theta_ss: tuple = tuple(np.flip(np.linspace(4, 85, 2)))
 
     supress_prints: bool = False
 
@@ -65,7 +65,7 @@ class VariablesConfig:
 @dataclass(frozen=True)
 class TrainingConfig:
     T: int = 2400  # total training set time (not time to reach equilibrium during every step)
-    alpha: float = 0.02  # learning rate
+    alpha: float = 0.2  # learning rate
 
     problem: str = 'tau'
     # problem: str = 'Fy'
@@ -90,7 +90,8 @@ class TrainingConfig:
 class StateConfig:
 
     # init_buckle: tuple = (1, -1, -1, 1, -1, -1, 1, 1, 1, 1)
-    init_buckle: tuple = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
+    # init_buckle: tuple = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
+    init_buckle: tuple = tuple(np.ones(30,))
     # init_buckle: tuple = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)  # ones
 
 

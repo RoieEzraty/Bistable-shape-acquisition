@@ -44,6 +44,7 @@ class SupervisorClass:
         self.problem = CFG.Train.problem
         self.desired_mode = CFG.Train.desired_mode
         if self.desired_mode == 'analytic_function':
+            self.desired_buckle = None
             self.desired_tau_func = lambda theta: CFG.Train.tau0 + \
                                                   CFG.Train.tau1 * np.exp(-CFG.Train.beta * (theta - CFG.Train.theta0))
         elif self.desired_mode == 'specific_buckle':

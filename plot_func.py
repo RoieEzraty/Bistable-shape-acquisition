@@ -19,8 +19,8 @@ import colors, funcs_geometry
 # ================================
 
 
-def importants(buckle_in_t: NDArray[np.int], desired_buckle: NDArray[np.int], loss_in_t: NDArray[np.float],
-               input_update_in_t: NDArray[np.float]):
+def importants(buckle_in_t: NDArray[np.int], loss_in_t: NDArray[np.float], input_update_in_t: NDArray[np.float],
+               desired_buckle: Optional[NDArray[np.int]]) -> None:
 
     # Set the custom color cycle globally without cycler
     colors_lst, red, custom_cmap = colors.color_scheme()
