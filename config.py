@@ -10,7 +10,7 @@ import numpy as np
 @dataclass(frozen=True)
 class StructureConfig:
     H: int = 1  # Hinges
-    S: int = 10  # Shims per hinge
+    S: int = 20  # Shims per hinge
     L: float = 1.  # length of edge (2 per hinge)
     Nin: int = 3  # tip position in (x, y) and its angle
     Nout: int = 3  # Fx, Fy, torque, all on tip
@@ -44,10 +44,17 @@ class VariablesConfig:
     # thresh: tuple = (125, 120, 115, 110, 105, 100, 95, 90, 85, 80)
     # theta_ss: tuple = (60, 50, 39, 24, 33, 28, 13, 11, 10, 9)
 
-    k_stiff: tuple = tuple(np.linspace(20, 4, 10))
-    k_soft: tuple = tuple(np.linspace(3, 0.2, 10))
-    thresh: tuple = tuple(np.linspace(150, 100, 10))
-    theta_ss: tuple = tuple(np.linspace(10, 60, 10))
+    k_stiff: tuple = tuple(np.linspace(40, 4, 20))
+    # k_stiff: tuple = tuple(np.linspace(20, 4, 10))
+
+    # k_soft: tuple = tuple(np.linspace(3, 0.03, 20))
+    k_soft: tuple = tuple(np.flip(np.linspace(3, 0.3, 10)))
+
+    thresh: tuple = tuple(np.linspace(95, 165, 20))
+    # thresh: tuple = tuple(np.flip(np.linspace(100, 160, 10)))
+
+    theta_ss: tuple = tuple(np.linspace(5, 65, 20))
+    # theta_ss: tuple = tuple(np.flip(np.linspace(5, 60, 10)))
 
     supress_prints: bool = False
 
@@ -57,23 +64,23 @@ class VariablesConfig:
 # -----------------------------
 @dataclass(frozen=True)
 class TrainingConfig:
-    T: int = 860  # total training set time (not time to reach equilibrium during every step)
-    alpha: float = 2.0  # learning rate
+    T: int = 2000  # total training set time (not time to reach equilibrium during every step)
+    alpha: float = 0.02  # learning rate
 
     problem: str = 'tau'
     # problem: str = 'Fy'
 
-    # desired_mode: str = 'analytic_function'
-    desired_mode: str = 'specific_buckle'
+    desired_mode: str = 'analytic_function'
+    # desired_mode: str = 'specific_buckle'
 
-    tau0: float = -2000
+    tau0: float = +2000
     tau1: float = 0.7
-    beta: float = 0.07
-    theta0: float = 70
+    beta: float = 0.065
+    theta0: float = 65
 
-    desired_buckle: tuple = (-1, 1, -1, -1, -1, -1, -1, -1, 1, -1)
+    desired_buckle: tuple = (1, 1, -1, 1, 1, -1, 1, 1, -1, 1)
 
-    rand_key_dataset: int = 7  # for random sampling of dataset, if dataset_sampling is True
+    rand_key_dataset: int = 8  # for random sampling of dataset, if dataset_sampling is True
 
 
 # -----------------------------
@@ -82,7 +89,8 @@ class TrainingConfig:
 @dataclass(frozen=True)
 class StateConfig:
 
-    init_buckle: tuple = (1, 1, -1, 1, -1, 1, 1, 1, -1, 1)
+    # init_buckle: tuple = (1, -1, -1, 1, -1, -1, 1, 1, 1, 1)
+    init_buckle: tuple = (1, -1, -1, 1, -1, -1, 1, 1, 1, 1, -1, 1, 1, -1, -1, -1, 1, 1, 1, -1)
     # init_buckle: tuple = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)  # ones
 
 

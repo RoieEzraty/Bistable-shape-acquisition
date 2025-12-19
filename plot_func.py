@@ -105,7 +105,7 @@ def plot_response(theta: NDArray[np.float_], tau_init: NDArray[np.float_], tau_d
     ax.legend(legend)
     if theta_range:
         ax.set_xlim(theta_range)
-    ax.set_ylim([-5000, 5000])
+    # ax.set_ylim([-5000, 5000])
     ax.set_ylabel(r'$\tau$')
     ax.set_xlabel(r'$\theta$')
     plt.tight_layout()
