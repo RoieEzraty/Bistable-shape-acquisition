@@ -64,19 +64,26 @@ class VariablesConfig:
 # -----------------------------
 @dataclass(frozen=True)
 class TrainingConfig:
-    T: int = 4000  # total training set time (not time to reach equilibrium during every step)
-    alpha: float = 0.05  # learning rate
+    T: int = 2000  # total training set time (not time to reach equilibrium during every step)
+    alpha: float = 0.02  # learning rate
 
     problem: str = 'tau'
     # problem: str = 'Fy'
 
-    desired_mode: str = 'analytic_function'
+    # desired_mode: str = 'analytic_function_exp'
+    desired_mode: str = 'analytic_function_sin'
     # desired_mode: str = 'specific_buckle'
 
-    tau0: float = -2000
-    tau1: float = 0.65
-    beta: float = 0.065
-    theta0: float = 90
+    if desired_mode == 'analytic_function_exp':
+        tau0: float = -2000
+        tau1: float = 0.65
+        beta: float = 0.065
+        theta0: float = 90
+    elif desired_mode == 'analytic_function_sin':
+        tau0: float = -2000
+        tau1: float = 16000
+        beta: float = 0.45
+        theta0: float = 180.0 * np.pi/180
 
     desired_buckle: tuple = (1, 1, -1, 1, 1, -1, 1, 1, -1, 1)
 
@@ -85,7 +92,7 @@ class TrainingConfig:
     eps: float = 1e-2
     window_for_kill: int = 10  # If loss goes below eps for more than window_for_kill time steps, stop loop
 
-    skip_to_thresh: bool = False  # whether update values jump between + and - lowest threshold 
+    skip_to_thresh: bool = True  # whether update values jump between + and - lowest threshold 
                                  # since nothing happens in between
 
 
@@ -97,7 +104,7 @@ class StateConfig:
 
     # init_buckle: tuple = (1, -1, -1, 1, -1, -1, 1, 1, 1, 1)
     # init_buckle: tuple = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
-    init_buckle: tuple = tuple(np.ones(30,))
+    init_buckle: tuple = tuple(-np.ones(30,))
     # init_buckle: tuple = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)  # ones
 
 

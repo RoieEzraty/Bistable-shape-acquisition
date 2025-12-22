@@ -43,10 +43,14 @@ class SupervisorClass:
         self.rand_key_dataset = CFG.Train.rand_key_dataset
         self.problem = CFG.Train.problem
         self.desired_mode = CFG.Train.desired_mode
-        if self.desired_mode == 'analytic_function':
+        if self.desired_mode == 'analytic_function_exp':
             self.desired_buckle = None
             self.desired_tau_func = lambda theta: CFG.Train.tau0 + \
                                                   CFG.Train.tau1 * np.exp(-CFG.Train.beta * (theta - CFG.Train.theta0))
+        elif self.desired_mode == 'analytic_function_sin':
+            self.desired_buckle = None
+            self.desired_tau_func = lambda theta: CFG.Train.tau0 + \
+                                                  CFG.Train.tau1 * np.sin(CFG.Train.beta*theta*2*np.pi/180 - CFG.Train.theta0)
         elif self.desired_mode == 'specific_buckle':
             self.desired_buckle = Strctr._custom_reshape(CFG.Train.desired_buckle)
         self.alpha = CFG.Train.alpha
@@ -82,7 +86,7 @@ class SupervisorClass:
                 if self.desired_mode == 'specific_buckle':
                     self.desired_tau_in_t[i] = funcs_physical.tau_hinge(theta, self.desired_buckle, Variabs.theta_ss,
                                                                         Variabs.k_stiff, Variabs.k_soft, hinge=j)
-                elif self.desired_mode == 'analytic_function':
+                else:
                     self.desired_tau_in_t[i] = self.desired_tau_func(theta)
 
     def set_theta(self, Variabs: "VariablesClass", t: int) -> None:
