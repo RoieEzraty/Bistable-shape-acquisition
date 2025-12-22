@@ -77,3 +77,4 @@ class VariablesClass:
         """
         self.k_bar = np.mean([np.mean(self.k_stiff, axis=1), np.mean(self.k_soft, axis=1)], axis=0)
         self.theta_bar = np.mean(self.theta_ss, axis=1)
+        self.tau_bar = self.k_bar * self.theta_bar ** 2

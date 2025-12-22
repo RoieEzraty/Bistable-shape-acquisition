@@ -65,5 +65,5 @@ class StateClass:
                     buckle_nxt[i, j] = self.buckle[i, j]
         self.buckle = copy.copy(buckle_nxt)
         self.buckle_in_t[t] = self.buckle
-        if not Variabs.supress_prints:
-            print('buckle pattern ', self.buckle)
+        # if not Variabs.supress_prints:
+        #     print('buckle pattern ', self.buckle)

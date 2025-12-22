@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from Network_State import Network_State
     from Big_Class import Big_Class
 
-import colors, funcs_geometry
+import colors, helpers_builders
 
 # ================================
 # functions for plots
@@ -20,7 +20,7 @@ import colors, funcs_geometry
 
 
 def importants(buckle_in_t: NDArray[np.int], loss_in_t: NDArray[np.float], input_update_in_t: NDArray[np.float],
-               desired_buckle: Optional[NDArray[np.int]]) -> None:
+               desired_buckle: Optional[NDArray[np.int]], window: Optional[int] = 1) -> None:
 
     # Set the custom color cycle globally without cycler
     colors_lst, red, custom_cmap = colors.color_scheme()
@@ -38,7 +38,8 @@ def importants(buckle_in_t: NDArray[np.int], loss_in_t: NDArray[np.float], input
     ax1 = fig.add_subplot(gs[0])
 
     # Plot Supervisor loss on left y-axis
-    ax1.plot(loss_in_t, '.', lw=2, label="Loss")
+    loss_movmean = helpers_builders.mov_ave(loss_in_t, window)
+    ax1.plot(loss_movmean, lw=2, label="Loss")
     ax1.set_yscale('log')
     # ax1.set_ylim([1e-1, 1e3])
     ax1.set_ylabel("Loss")

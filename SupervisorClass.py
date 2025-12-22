@@ -50,7 +50,6 @@ class SupervisorClass:
         elif self.desired_mode == 'specific_buckle':
             self.desired_buckle = Strctr._custom_reshape(CFG.Train.desired_buckle)
         self.alpha = CFG.Train.alpha
-        self.input_in_t = np.zeros([self.T,])
         self.input_update_in_t = np.zeros([self.T,])
         self.loss_in_t = np.zeros([self.T,])
         self.loss_norm_in_t = np.zeros([self.T,])
@@ -104,8 +103,9 @@ class SupervisorClass:
             self.loss = funcs_ML.loss_tau(self.desired_tau, State.tau)
         elif self.problem == 'Fy':
             self.loss = funcs_ML.loss_Fy(self.desired_Fy, State.Fy)
-        tau_norm_of_theta = Variabs.k_bar * self.theta_in_t[t]**2
-        self.loss_norm = self.loss / tau_norm_of_theta
+        # tau_norm_of_theta = Variabs.k_bar * self.theta_in_t[t]**2
+        # self.loss_norm = self.loss / tau_norm_of_theta
+        self.loss_norm = self.loss / Variabs.tau_bar
         self.loss_MSE = funcs_ML.loss_MSE(self.loss_norm)
         self.loss_in_t[t] = self.loss
         self.loss_norm_in_t[t] = self.loss_norm
