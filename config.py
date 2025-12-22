@@ -51,10 +51,10 @@ class VariablesConfig:
     # k_soft: tuple = tuple(np.flip(np.linspace(0.1, 0.0001, 20)))
 
     thresh: tuple = tuple(np.linspace(95, 165, 30))
-    # thresh: tuple = tuple(np.flip(np.linspace(100, 160, 10)))
+    # thresh: tuple = tuple(np.flip(np.linspace(95, 165, 30)))
 
     theta_ss: tuple = tuple(np.linspace(4, 85, 30))
-    # theta_ss: tuple = tuple(np.flip(np.linspace(4, 85, 2)))
+    # theta_ss: tuple = tuple(np.flip(np.linspace(4, 85, 30)))
 
     supress_prints: bool = False
 
@@ -64,8 +64,8 @@ class VariablesConfig:
 # -----------------------------
 @dataclass(frozen=True)
 class TrainingConfig:
-    T: int = 2400  # total training set time (not time to reach equilibrium during every step)
-    alpha: float = 0.2  # learning rate
+    T: int = 5000  # total training set time (not time to reach equilibrium during every step)
+    alpha: float = 0.05  # learning rate
 
     problem: str = 'tau'
     # problem: str = 'Fy'
@@ -82,6 +82,9 @@ class TrainingConfig:
 
     rand_key_dataset: int = 8  # for random sampling of dataset, if dataset_sampling is True
 
+    eps: float = 1e-2
+    window_for_kill: int = 10  # If loss goes below eps for more than window_for_kill time steps, stop loop
+
 
 # -----------------------------
 # State
@@ -91,7 +94,7 @@ class StateConfig:
 
     # init_buckle: tuple = (1, -1, -1, 1, -1, -1, 1, 1, 1, 1)
     # init_buckle: tuple = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
-    init_buckle: tuple = tuple(np.ones(30,))
+    init_buckle: tuple = tuple(-np.ones(30,))
     # init_buckle: tuple = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)  # ones
 
 

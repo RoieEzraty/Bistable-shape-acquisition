@@ -59,6 +59,9 @@ class SupervisorClass:
         self.input_update = 0
         self.input_update_in_t[0] = self.input_update
 
+        self.eps = CFG.Train.eps
+        self.window_for_kill = CFG.Train.window_for_kill
+
     def init_dataset(self, Strctr: "StructureClass", Variabs: "VariablesClass",) -> None:
         # self.theta_in_t = np.array([-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50])
         rng = np.random.default_rng(self.rand_key_dataset)
@@ -116,6 +119,7 @@ class SupervisorClass:
         if self.problem == 'tau':
             delta_theta = funcs_ML.input_update_theta(State.tau, self.loss_norm, self.theta, Variabs.k_bar, Variabs.theta_bar)
             input_update_nxt = copy.copy(self.input_update) + self.alpha * delta_theta
+            input_update_nxt = funcs_physical.clip_theta(input_update_nxt)
         elif self.problem == 'Fy':
             delta_pos = funcs_ML.input_update_pos(State.tau, self.loss, self.thetas, Variabs.k_bar, Variabs.theta_bar)
             input_update_nxt = copy.copy(self.input_update) + self.alpha * delta_pos

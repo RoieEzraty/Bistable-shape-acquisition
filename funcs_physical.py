@@ -34,6 +34,10 @@ def measure_full_response(buckle, theta_ss, k_stiff, k_soft, h=0, length=100):
     return theta_vec, tau_vec
 
 
+def clip_theta(theta: float) -> float:
+    return np.clip(theta, -180, 180)
+
+
 # ===================================================
 # Not in use
 # ===================================================
