@@ -62,6 +62,10 @@ class SupervisorClass:
         self.eps = CFG.Train.eps
         self.window_for_kill = CFG.Train.window_for_kill
 
+        self.skip_to_thresh = CFG.Train.skip_to_thresh
+        if self.skip_to_thresh:
+            self.skip = min(CFG.Variabs.thresh)
+
     def init_dataset(self, Strctr: "StructureClass", Variabs: "VariablesClass",) -> None:
         # self.theta_in_t = np.array([-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50])
         rng = np.random.default_rng(self.rand_key_dataset)
@@ -123,6 +127,13 @@ class SupervisorClass:
         elif self.problem == 'Fy':
             delta_pos = funcs_ML.input_update_pos(State.tau, self.loss, self.thetas, Variabs.k_bar, Variabs.theta_bar)
             input_update_nxt = copy.copy(self.input_update) + self.alpha * delta_pos
+
+        if self.skip_to_thresh:  # skip the middle angles that do nothing
+            if np.sign(self.alpha * delta_theta) < 0 and self.input_update > 0 and self.input_update < self.skip:
+                input_update_nxt = -self.skip
+            elif np.sign(self.alpha * delta_theta) > 0 and self.input_update < 0 and self.input_update > -self.skip:
+                input_update_nxt = self.skip
+
         self.input_update = input_update_nxt
         self.input_update_in_t[t] = float(self.input_update)
         if not Variabs.supress_prints:

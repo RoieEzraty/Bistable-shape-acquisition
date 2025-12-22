@@ -65,7 +65,7 @@ class VariablesConfig:
 @dataclass(frozen=True)
 class TrainingConfig:
     T: int = 5000  # total training set time (not time to reach equilibrium during every step)
-    alpha: float = 0.05  # learning rate
+    alpha: float = 0.03  # learning rate
 
     problem: str = 'tau'
     # problem: str = 'Fy'
@@ -84,6 +84,9 @@ class TrainingConfig:
 
     eps: float = 1e-2
     window_for_kill: int = 10  # If loss goes below eps for more than window_for_kill time steps, stop loop
+
+    skip_to_thresh: bool = True  # whether update values jump between + and - lowest threshold 
+                                 # since nothing happens in between
 
 
 # -----------------------------
