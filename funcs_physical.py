@@ -13,6 +13,9 @@ def tau_hinge(theta, buckle_arr, theta_ss, k_stiff, k_soft, hinge=0):
 
 def taus_of_shims_in_hinge(theta, buckle_arr_hinge, theta_ss, k_stiff, k_soft, h=0):
     tau_k = np.zeros(np.size(theta_ss))
+    # print('buckle_arr_hinge[h, i] = ', buckle_arr_hinge[0, 0])
+    # print('theta = ', theta)
+    # print('theta_ss[h, i] = ', theta_ss[0, 0])
     for i in range(np.size(theta_ss)):
         # print('buckle[i]', buckle_arr_hinge[i])
         # print('theta', theta)

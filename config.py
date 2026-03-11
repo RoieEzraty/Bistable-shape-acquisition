@@ -53,7 +53,7 @@ class VariablesConfig:
     thresh: tuple = tuple(np.linspace(95, 165, 30))
     # thresh: tuple = tuple(np.flip(np.linspace(95, 165, 30)))
 
-    theta_ss: tuple = tuple(np.linspace(4, 85, 30))
+    theta_ss: tuple = tuple(np.linspace(40, 55, 30))
     # theta_ss: tuple = tuple(np.flip(np.linspace(4, 85, 30)))
 
     supress_prints: bool = False
@@ -105,6 +105,7 @@ class StateConfig:
     # init_buckle: tuple = (1, -1, -1, 1, -1, -1, 1, 1, 1, 1)
     # init_buckle: tuple = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
     init_buckle: tuple = tuple(-np.ones(30,))
+    
     # init_buckle: tuple = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)  # ones
 
 

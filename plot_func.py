@@ -80,7 +80,7 @@ def importants(buckle_in_t: NDArray[np.int], loss_in_t: NDArray[np.float], input
     plt.show()
 
 
-def plot_response(theta: NDArray[np.float_], tau_init: NDArray[np.float_], tau_des: NDArray[np.float_],
+def plot_response(theta: NDArray[np.float_], tau_init: NDArray[np.float_], tau_des: NDArray[np.float_] = None,
                   tau_fin: Optional[NDArray[np.float_]] = None, theta_range=[-180, 180]) -> None:
     """
     tau a.f.o theta
@@ -93,15 +93,17 @@ def plot_response(theta: NDArray[np.float_], tau_init: NDArray[np.float_], tau_d
     # Plot
     # initial tau a.f.o theta
     ax.plot(theta, tau_init, lw=2, color=colors_lst[0])
-    if tau_fin is not None:  # plot also final state
-        legend = [r'$\tau\left(0\right)$', r'$\tau\left(end\right)$', r'$\hat{\tau}$']
-        # final tau a.f.o theta
-        ax.plot(theta, tau_fin, lw=2, color=colors_lst[2])
+    if tau_des is not None:  # plot also final state
+        ax.plot(theta, tau_des, '--', lw=2, color=colors_lst[1])
+        if tau_fin is not None:
+            # final tau a.f.o theta
+            ax.plot(theta, tau_fin, lw=2, color=colors_lst[2])
+            legend = [r'$\tau\left(0\right)$', r'$\hat{\tau}$', r'$\tau\left(end\right)$']
+        else:
+            legend = [r'$\tau\left(0\right)$', r'$\hat{\tau}$']
     else:
-        legend = [r'$\tau\left(0\right)$', r'$\hat{\tau}$']
-    # desired tau a.f.o theta
-    ax.plot(theta, tau_des, '--', lw=2, color=colors_lst[1])
-    
+        legend = [r'$\tau\left(0\right)$']
+
     # beautify
     ax.legend(legend)
     if theta_range:
